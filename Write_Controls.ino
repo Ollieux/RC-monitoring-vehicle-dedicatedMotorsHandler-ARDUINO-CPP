@@ -18,14 +18,15 @@ int rightMotorSpeed = 0;
 Servo servo;
 int servoAngle = 90;
 
-void writeMotors(int xValue, int yValue);
+// void writeMotors(int xValue, int yValue);
 void writeServo(String arg);
 void moveAhead();
 void moveBack();
 void turnLeft();
 void turnRight();
 void motorsStop();
-void writeMotorsY(int yValue);
+//void writeMotorsY(int yValue);
+void writeMotorsYScaled(int yValue);
 
 void setup()
 {
@@ -45,8 +46,13 @@ void setup()
   motorsStop();
 }
 
+// int ORIGIN = -85; // TODO: [-85, 0]
+//int initialY = ORIGIN;
+int yInitial;
+int LOWER_BOUND_Y = -100;
+int UPPER_BOUND_Y = 0;
 String data;
-int num;
+int value;
 void loop()
 {
   //while(!Serial.available())
@@ -70,22 +76,45 @@ void loop()
     data = Serial.readStringUntil('#');
 //    int separator = data.indexOf(',');
 
-    if (data.startsWith("%"))
+    if (data.startsWith("!"))
+    {
+      yInitial = data.substring(1).toInt();
+
+      if (!((yInitial > UPPER_BOUND_Y - 5) || (yInitial < LOWER_BOUND_Y - 5)))
+      {
+        //writeMotorsY(yInital);
+        writeMotorsYScaled(yInitial);
+      }
+
+     
+//      LOWER_BOUND_Y += initialY - ORIGIN;
+//      UPPER_BOUND_Y += initialY - ORIGIN;
+
+      
+    }
+    else if (data.startsWith("%"))
     {
 //      int num;
-      num = data.substring(1).toInt();
+      value = data.substring(1).toInt();
 
-      if (num == 0)
+//      if (num == 0)
+//      {
+//        digitalWrite(LED_BUILTIN, LOW);
+//       
+//      }
+//      else
+//      {
+//        digitalWrite(LED_BUILTIN, HIGH); 
+//      }
+
+
+      if (!((yInitial > UPPER_BOUND_Y - 5) || (yInitial < LOWER_BOUND_Y - 5)))
       {
-        digitalWrite(LED_BUILTIN, LOW);
-       
-      }
-      else
-      {
-        digitalWrite(LED_BUILTIN, HIGH); 
+        //writeMotorsY(value);
+        writeMotorsYScaled(value);
       }
 
-      // writeMotorsY(num);
+      //// writeMotorsY(num);
       
     }
     
@@ -156,7 +185,7 @@ void writeServo(String arg)
   servo.write(servoAngle); 
 }
 
-void writeMotors(int xValue, int yValue)
+/** void writeMotors(int xValue, int yValue)
 {
   if (yValue < -85)
   {
@@ -224,7 +253,7 @@ void writeMotors(int xValue, int yValue)
 
   analogWrite(enableLeft, leftMotorSpeed);
   analogWrite(enableRight, rightMotorSpeed);
-}
+} **/
 
 void moveAhead()
 {
@@ -266,7 +295,7 @@ void motorsStop()
   digitalWrite(rightFront, LOW);  
 }
 
-void writeMotorsY(int yValue)
+/**void writeMotorsY(int yValue)
 {
   if (yValue > 0)
   {
@@ -310,4 +339,43 @@ void writeMotorsY(int yValue)
 
   analogWrite(enableLeft, leftMotorSpeed);
   analogWrite(enableRight, rightMotorSpeed);
+} **/
+
+void writeMotorsYScaled(int yValue)
+{
+
+
+  if (yValue < yInitial) //TODO?: + 3
+  {
+    moveBack();
+    rightMotorSpeed = map(yValue, yInitial, LOWER_BOUND_Y, 0, 255);
+    leftMotorSpeed = map(yValue, yInitial, LOWER_BOUND_Y, 0, 255); 
+  }
+
+  else if (yValue > yInitial) //TODO?: - 3
+  {
+    moveAhead();
+    rightMotorSpeed = map(yValue, yInitial, UPPER_BOUND_Y, 0, 255);
+    leftMotorSpeed = map(yValue, yInitial, UPPER_BOUND_Y, 0, 255); 
+  }
+
+  else
+  {
+    rightMotorSpeed = 0;
+    leftMotorSpeed = 0;
+  }
+
+  if (rightMotorSpeed < 70)
+  {
+    rightMotorSpeed = 0;
+  }
+
+  if (leftMotorSpeed < 70)
+  {
+    leftMotorSpeed = 0;
+  }
+
+  analogWrite(enableLeft, leftMotorSpeed);
+  analogWrite(enableRight, rightMotorSpeed);
 }
+  
