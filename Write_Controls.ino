@@ -11,7 +11,7 @@
 
 const int LOWER_BOUND_X = -36;
 const int UPPER_BOUND_X = 36;
-const int LOWER_BOUND_Y = -100;
+const int LOWER_BOUND_Y = -65;
 const int UPPER_BOUND_Y = 0;
 
 int leftMotorSpeed = 0;
@@ -26,14 +26,12 @@ int yInitial;
 String data;
 int value;
 
-// void writeMotors(int xValue, int yValue);
 void writeServo(String arg);
 void moveAhead();
 void moveBack();
 void turnLeft();
 void turnRight();
 void stopMotors();
-// void writeMotorsYScaled(int yValue);
 void writeMotorsScaled(int xValue, int yValue);
 
 void setup()
@@ -55,63 +53,18 @@ void setup()
 
 void loop()
 {
-  //while(!Serial.available())
-  //int x = Serial.read();
-
+  
   if (Serial.available() > 0)
   {
-//    String data;
     data = Serial.readStringUntil('#');
     int separator = data.indexOf(',');
 
     if (separator != -1)
-    {
-//      if (data.startsWith("!"))
-//      {
-//        xInitial = data.substring(1, separator).toInt();
-//        yInitial = data.substring(separator + 1).toInt();
-//  
-//        if (!((yInitial > UPPER_BOUND_Y - 5) || (yInitial < LOWER_BOUND_Y - 5)))
-//        {
-//          //writeMotorsY(yInital);
-//          writeMotorsYScaled(yInitial);
-//        }
-//  
-//       
-////      LOWER_BOUND_Y += initialY - ORIGIN;
-////      UPPER_BOUND_Y += initialY - ORIGIN;
-//  
-//        
-//      }
-//      else if (data.startsWith("%"))
-//      {
-        
-        int firstNum = data.substring(1, separator).toInt();
-        int secondNum = data.substring(separator + 1).toInt();
-
-
-  
-////      if ((firstNum == 0) && (secondNum == 0))
-////      {
-////       digitalWrite(LED_BUILTIN, LOW); 
-////      }
-////      else
-////      {
-////        digitalWrite(LED_BUILTIN, HIGH); 
-//// 
-////      }
-
- 
-//        if (!((yInitial > UPPER_BOUND_Y - 5) || (yInitial < LOWER_BOUND_Y - 5)))
-//        {
-////        writeMotorsY(value);
-//          writeMotorsYScaled(value);
-          
-//        }
-  
-//////         writeMotorsY(num);
-        writeMotorsScaled(firstNum, secondNum);
-//      }
+    {  
+      int firstNum = data.substring(1, separator).toInt();
+      int secondNum = data.substring(separator + 1).toInt();
+      
+      writeMotorsScaled(firstNum, secondNum);
     }
     else
     {
@@ -149,143 +102,6 @@ void writeServo(String arg)
   servo.write(servoAngle); 
 }
 
-/** void writeMotors(int xValue, int yValue)
-{
-  if (yValue < -85)
-  {
-    moveBack();
-    rightMotorSpeed = map(yValue, -85, -120, 0, 255);
-    leftMotorSpeed = map(yValue, -85, -120, 0, 255); 
-  }
-
-   else if (yValue > -80)
-   {
-    moveAhead();
-    rightMotorSpeed = map(yValue, -80, 0, 0, 255);
-    leftMotorSpeed = map(yValue, -80, 0, 0, 255); 
-  }
-
-  else
-  {
-    rightMotorSpeed = 0;
-    leftMotorSpeed = 0;
-  }
-
-  if (xValue > 0)
-  { // 2
-    int xValueScaled = map(xValue, 0, 85, 0, 255); 
-    rightMotorSpeed = rightMotorSpeed - xValueScaled; 
-    leftMotorSpeed = leftMotorSpeed + xValueScaled;
-    
-    if (leftMotorSpeed > 255)
-    {
-      leftMotorSpeed = 255;
-    }
-    
-    if (rightMotorSpeed < 0)
-    {
-      rightMotorSpeed = 0;
-    }
-  }
-  
-  else if (xValue < 0)
-  {
-    int xValueScaled = map(xValue, 0, -85, 0, 255); 
-    rightMotorSpeed = rightMotorSpeed + xValueScaled; 
-    leftMotorSpeed = leftMotorSpeed - xValueScaled;
-
-    if (rightMotorSpeed > 255)
-    {
-      rightMotorSpeed = 255;
-    }
-    
-    if (leftMotorSpeed < 0)
-    {
-      leftMotorSpeed = 0;
-    }
-  }
-
-  if (rightMotorSpeed < 70)
-  {
-    rightMotorSpeed = 0;
-  }
-
-  if (leftMotorSpeed < 70)
-  {
-    leftMotorSpeed = 0;
-  }
-
-  analogWrite(enableLeft, leftMotorSpeed);
-  analogWrite(enableRight, rightMotorSpeed);
-} **/
-
-/**void writeMotorsYScaled(int yValue)
-{
-  if (yValue < yInitial) //TODO?: + 3
-  {
-    moveBack();
-    rightMotorSpeed = map(yValue, yInitial, LOWER_BOUND_Y, 0, 255);
-    leftMotorSpeed = map(yValue, yInitial, LOWER_BOUND_Y, 0, 255); 
-  }
-  else if (yValue > yInitial) //TODO?: - 3
-  {
-    moveAhead();
-    rightMotorSpeed = map(yValue, yInitial, UPPER_BOUND_Y, 0, 255);
-    leftMotorSpeed = map(yValue, yInitial, UPPER_BOUND_Y, 0, 255); 
-  }
-  else
-  {
-    rightMotorSpeed = 0;
-    leftMotorSpeed = 0;
-  }
-
-    if (xValue > 0)
-  {
-    int xValueScaled = map(xValue, xInitial, LOWER_BOUND_X, 0, 255); 
-    rightMotorSpeed = rightMotorSpeed - xValueScaled; 
-    leftMotorSpeed = leftMotorSpeed + xValueScaled;
-    
-    if (leftMotorSpeed > 255)
-    {
-      leftMotorSpeed = 255;
-    }
-    
-    if (rightMotorSpeed < 0)
-    {
-      rightMotorSpeed = 0;
-    }
-  }
-  else if (xValue < 0)
-  {
-    int xValueScaled = map(xValue, xInitial, UPPER_BOUND_X, 0, 255); 
-    rightMotorSpeed = rightMotorSpeed + xValueScaled; 
-    leftMotorSpeed = leftMotorSpeed - xValueScaled;
-
-    if (rightMotorSpeed > 255)
-    {
-      rightMotorSpeed = 255;
-    }
-    
-    if (leftMotorSpeed < 0)
-    {
-      leftMotorSpeed = 0;
-    }
-  }
-
-  if (rightMotorSpeed < 70)
-  {
-    rightMotorSpeed = 0;
-  }
-
-  if (leftMotorSpeed < 70)
-  {
-    leftMotorSpeed = 0;
-  }
-
-  analogWrite(enableLeft, leftMotorSpeed);
-  analogWrite(enableRight, rightMotorSpeed);
-} **/
-
 void writeMotorsScaled(int xValue, int yValue)
 {
   if (!initialSet)
@@ -306,6 +122,7 @@ void writeMotorsScaled(int xValue, int yValue)
    }
   else
   {
+    
     if (xValue < LOWER_BOUND_X)
     {
       xValue = LOWER_BOUND_X;
@@ -326,10 +143,10 @@ void writeMotorsScaled(int xValue, int yValue)
 
     if (yValue < yInitial) //TODO?: + 3
     {
-    moveBack();
+      moveBack();
     
-    rightMotorSpeed = map(yValue, yInitial, LOWER_BOUND_Y, 0, 255);
-    leftMotorSpeed = map(yValue, yInitial, LOWER_BOUND_Y, 0, 255); 
+      rightMotorSpeed = map(yValue, yInitial, LOWER_BOUND_Y, 0, 255);
+      leftMotorSpeed = map(yValue, yInitial, LOWER_BOUND_Y, 0, 255); 
     }
     else if (yValue > yInitial) //TODO?: - 3
     {
@@ -340,8 +157,8 @@ void writeMotorsScaled(int xValue, int yValue)
     }
     else
     {
-    rightMotorSpeed = 0;
-    leftMotorSpeed = 0;
+      rightMotorSpeed = 0;
+      leftMotorSpeed = 0;
     }
 
     if (xValue > xInitial)
@@ -350,6 +167,8 @@ void writeMotorsScaled(int xValue, int yValue)
       
       rightMotorSpeed = rightMotorSpeed - xValueScaled; 
       leftMotorSpeed = leftMotorSpeed + xValueScaled;
+//      rightMotorSpeed = rightMotorSpeed + xValueScaled; 
+//      leftMotorSpeed = leftMotorSpeed - xValueScaled;
     
     if (leftMotorSpeed > 255)
       {
@@ -367,6 +186,9 @@ void writeMotorsScaled(int xValue, int yValue)
       
       rightMotorSpeed = rightMotorSpeed + xValueScaled; 
       leftMotorSpeed = leftMotorSpeed - xValueScaled;
+//      rightMotorSpeed = rightMotorSpeed - xValueScaled; 
+//      leftMotorSpeed = leftMotorSpeed + xValueScaled;
+      
 
       if (rightMotorSpeed > 255)
       {
