@@ -106,12 +106,12 @@ void writeMotorsScaled(int xValue, int yValue)
 {
   if (!initialSet)
   {
-    if (!((yValue < UPPER_BOUND_Y - 5) || (yValue > LOWER_BOUND_Y + 5))) 
+    if (!((yValue < UPPER_BOUND_Y - 5) && (yValue > LOWER_BOUND_Y + 5))) 
     {
         return;
     }
     
-    if (!((xValue < (UPPER_BOUND_X - 5)) || (xValue > (LOWER_BOUND_X + 5)))) 
+    if (!((xValue < (UPPER_BOUND_X - 5)) && (xValue > (LOWER_BOUND_X + 5)))) 
     {
       return;
     }
